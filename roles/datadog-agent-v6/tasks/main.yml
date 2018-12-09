@@ -1,0 +1,32 @@
+- include_vars: dd.key.yml
+
+- name: check installed datadog-agent(yum)
+  yum: list=datadog-agent
+  register: check_datadogagent
+
+- name: install datadog-agent(yum)
+  shell: "DD_API_KEY={{ dd_api_key }} {{ dd_install_command }}"
+  when:
+    - check_datadogagent.results|selectattr("yumstate", "match", "installed")|list|length == 0
+
+- name: put common conf.d file
+  template:
+    src: "{{ item }}"
+    dest: '/etc/{{ item | regex_replace(role_path + "/templates/common/", "") }}'
+    owner: "{{ dd_user }}"
+    group: "{{ dd_group }}"
+  with_lines:
+    - "find {{ role_path }}/templates/common -type f -name '*.yaml'"
+  notify:
+    - restart datadog-agent
+
+- name: put conf.d file
+  template:
+    src: "{{ item }}"
+    dest: '/etc/{{ item | regex_replace(role_path + "/templates/" + ec2_role + "/", "") }}'
+    owner: "{{ dd_user }}"
+    group: "{{ dd_group }}"
+  with_lines:
+    - "find {{ role_path }}/templates/{{ ec2_role }} -type f -name '*.yaml'"
+  notify:
+    - restart datadog-agent

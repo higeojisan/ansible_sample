@@ -1,0 +1,6 @@
+- hosts: koda
+  become: yes
+  vars:
+    ec2_role: bastion
+  roles:
+    - datadog-agent-v6
