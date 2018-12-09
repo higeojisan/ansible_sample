@@ -1,0 +1,19 @@
+- name: ロケール設定確認
+  shell: localectl status | grep "System Locale" | awk -F ' ' '{print $3}'
+  register: locale_status
+  changed_when: false
+  check_mode: no
+
+- name: ロケール設定
+  command: localectl set-locale {{ base_locale }}
+  when: locale_status.stdout_lines.count( base_locale ) < 1
+
+- name: タイムゾーン設定確認
+  shell: timedatectl status | grep 'Time zone' | awk '{print $3}'
+  register: timedate_status
+  changed_when: false
+  check_mode: no
+
+- name: タイムゾーン設定
+  command: timedatectl set-timezone {{ base_timezone }}
+  when: timedate_status.stdout_lines.count( base_timezone ) < 1
