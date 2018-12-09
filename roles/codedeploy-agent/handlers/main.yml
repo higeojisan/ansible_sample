@@ -1,0 +1,5 @@
+- name: restart codedeploy agent
+  systemd:
+    name: codedeploy-agent.service
+    state: restarted
+    daemon_reload: yes

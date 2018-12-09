@@ -1,0 +1,37 @@
+####################
+# CodeDeploy Agent
+####################
+## Amazon Linux 2 AMI 2.0.20181024 x86_64 HVM gp2の場合、2.0.0がインストールされる
+## [root@ip-172-31-25-255 ~]# ruby -v
+## ruby 2.0.0p648 (2015-12-16) [x86_64-linux]
+- name: Install Ruby for CodeDeploy
+  yum: name=ruby state=present
+
+- name: check CodeDeploy agent
+  yum: list=codedeploy-agent
+  register: check_codedeploy
+
+- name: Download CodeDeploy agent Installer
+  get_url: url="https://aws-codedeploy-{{ aws_region }}.s3.amazonaws.com/latest/install" dest="/tmp/code-deploy-install" mode=0755
+  when: check_codedeploy.results|selectattr("yumstate", "match", "installed")|list|length == 0
+
+- name: Install CodeDeploy agent
+  command: /tmp/code-deploy-install auto
+  when: check_codedeploy.results|selectattr("yumstate", "match", "installed")|list|length == 0
+  notify: restart codedeploy agent
+
+- name: set codedeployagent.yml
+  template:
+    src: etc/codedeploy-agent/conf/codedeployagent.yml
+    dest: /etc/codedeploy-agent/conf/codedeployagent.yml
+    owner: root
+    group: root
+    mode: 0744
+  notify: restart codedeploy agent
+
+- name: Start codedeploy agent
+  systemd:
+    name: codedeploy-agent.service
+    enabled: yes
+    state: started
+    daemon_reload: yes
