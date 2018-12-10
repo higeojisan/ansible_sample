@@ -7,3 +7,4 @@
     - base
     - datadog-agent-v6
     - codedeploy-agent
+    - nginx

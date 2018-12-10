@@ -1,0 +1,18 @@
+- name: check enabled nginx1.12 amzn2-extras.repo
+  shell: "amazon-linux-extras list |grep nginx1.12 |grep enabled >/dev/null 2>&1 ; echo $?"
+  check_mode: no
+  register: check_enable_nginx_repo
+  changed_when: false
+
+- name: enable nginx1.12 amzn2-extras.repo
+  command: amazon-linux-extras enable nginx1.12
+  when:
+    - check_enable_nginx_repo.stdout != '0'
+
+- name: yum install for nginx
+  yum:
+    name: "{{ item }}"
+    state: present
+    enablerepo: amzn2extra-nginx1.12
+  with_items: "{{ nginx_pkg_name }}"
+  ignore_errors: '{{ ansible_check_mode }}'
