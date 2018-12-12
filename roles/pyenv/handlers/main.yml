@@ -1,0 +1,3 @@
+- name: pyenv reflection
+  shell: source /home/{{ pyenv_user }}/.bash_profile
+  become_user: "{{ pyenv_user }}"
