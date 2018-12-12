@@ -1,2 +1,9 @@
+base_users:
+  - { name: 'koda', uid: 3000, group: 'koda', groups: 'koda', state: 'present', key: 'public_keys/koda_id_rsa.pem.pub' }
+
+base_groups:
+  - { name: 'koda', gid: 3000, state: 'present' }
+
 base_locale: LANG=ja_JP.UTF-8
+
 base_timezone: Asia/Tokyo

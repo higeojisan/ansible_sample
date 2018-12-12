@@ -1,0 +1,21 @@
+- name: make group
+  group: name="{{ item.name }}" gid="{{ item.gid }}" state="{{ item.state }}"
+  with_items: "{{ base_groups }}"
+
+- name: add users
+  user: name="{{ item.name }}" uid="{{ item.uid }}" group="{{ item.group }}" groups="{{ item.groups }}" state="{{ item.state }}"
+  with_items: "{{ base_users }}"
+
+- name: add user authorized_keys
+  authorized_key: user="{{ item.name }}" key="{{ lookup('file', item.key) }}"
+  with_items: "{{ base_users }}"
+  when:
+    - not ansible_check_mode
+
+- name: users sudo setting
+  template:
+    src: etc/sudoers.d/users
+    dest: /etc/sudoers.d/users
+    owner: root
+    group: root
+    mode: 0440
