@@ -1,0 +1,2 @@
+- name: cloud-initの設定を転送
+  copy: src=etc/cloud/cloud.cfg dest=/etc/cloud/cloud.cfg owner=root group=root mode=0644

@@ -1,3 +1,4 @@
 - include: locale.yml
 - include: timezone.yml
 - include: user.yml
+- include: cloud-init.yml
