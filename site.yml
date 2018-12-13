@@ -4,4 +4,4 @@
     ec2_role: bastion # for datadog-agent-v6 role
     aws_region: ap-northeast-1 # for codedeploy-agent role
   roles:
-    - pyenv
+    - nginx
